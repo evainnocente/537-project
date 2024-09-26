@@ -1,0 +1,132 @@
+---
+title: "pcadapt"
+output: html_notebook
+---
+
+Following: https://bcm-uga.github.io/pcadapt/articles/pcadapt.html 
+
+Looking for outliers throughout the whole genome .bed files of each group (non-survivors and survivors and immune responders)
+
+Non-survivors:
+
+```{r}
+library(pcadapt)
+
+path_to_file <- "C:/Users/evain/OneDrive - Queen's University/university/537/Population diversity analyses/NSvariants.bed"
+
+
+data<-read.pcadapt(path_to_file, type = "bed")
+x <- pcadapt(input = data, K=4) 
+x
+
+#screeplot says first 2 PCs are best-or also 3 and 4? -retain pcs to left of straight line according to cattells rule
+plot(x, option = "screeplot")
+
+#making x have optimal number if PCS (2?)- rename to y
+y<- pcadapt(input=data, K = 2)
+summary(y)
+y$pvalues
+
+
+#score plot with first 2 PCs
+plot(y, option = "scores")
+
+#with PC 3 and 4
+plot(x, i = 3, j = 4, option = "scores")
+
+
+#manhattan plot
+
+plot(y , option = "manhattan")
+
+#qq plot- try with x and y
+
+plot(y, option = "qqplot")
+
+#x seems to look a bit better? 
+
+#if (!require("BiocManager", quietly = TRUE))
+    #install.packages("BiocManager")
+
+BiocManager::install("qvalue")
+
+library(qvalue)
+qval <- qvalue(y$pvalues)$qvalues
+alpha <- 0.05
+outliers <- which(qval < alpha)
+length(NSoutliers)
+NSoutliers<-outliers
+
+padj <- p.adjust(y$pvalues,method="bonferroni")
+alpha <- 0.05
+outliers <- which(padj < alpha)
+length(outliers)
+
+length(qval)
+
+print(NSoutliers)
+
+NSoutliers<-as.data.frame(NSoutliers)
+NSoutliers
+write.csv(NSoutliers,file="NSoutliers.csv")
+outliers
+
+cat(NSoutliers)
+```
+
+Survivors and immune responders:
+
+```{r}
+library(pcadapt)
+
+path_to_file <- "C:/Users/evain/OneDrive - Queen's University/university/537/Population diversity analyses/SIRvariants.bed"
+
+
+data<-read.pcadapt(path_to_file, type = "bed")
+x <- pcadapt(input = data, K=4) 
+x
+
+#screeplot says first 2 PCs are best-or also 3 and 4? -retain pcs to left of straight line according to cattells rule
+plot(x, option = "screeplot")
+
+#making x have optimal number if PCS (2?)- rename to y
+y<- pcadapt(input=data, K = 2)
+summary(y)
+y$pvalues
+
+
+#score plot with first 2 PCs
+plot(y, option = "scores")
+
+#with PC 3 and 4
+plot(x, i = 3, j = 4, option = "scores")
+
+
+#manhattan plot
+
+plot(y , option = "manhattan")
+
+#qq plot- try with x and y
+
+plot(y, option = "qqplot")
+
+#x seems to look a bit better? 
+
+#if (!require("BiocManager", quietly = TRUE))
+    #install.packages("BiocManager")
+
+BiocManager::install("qvalue")
+
+library(qvalue)
+qval <- qvalue(y$pvalues)$qvalues
+alpha <- 0.1
+SIRoutliers <- which(qval < alpha)
+length(outliers)
+
+SIRoutliers<-as.data.frame(SIRoutliers)
+SIRoutliers
+write.csv(SIRoutliers,file="SIRoutliers.csv")
+
+```
+
+
