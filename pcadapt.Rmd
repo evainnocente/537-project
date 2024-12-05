@@ -163,6 +163,10 @@ qval <- qvalue(res$pvalues)$qvalues
 alpha <- 0.05
 SIRoutliersthinned <- which(qval < alpha)
 length(SIRoutliersthinned)
+
+SIRoutliersthinned<-as.data.frame(SIRoutliersthinned)
+
+write.csv(SIRoutliersthinned,file="SIRoutliers_nocorrection_thinned.csv")
 ```
 
 nonsurvivors
@@ -193,5 +197,9 @@ qval <- qvalue(non$pvalues)$qvalues
 alpha <- 0.05
 NSoutliersthinned <- which(qval < alpha)
 length(NSoutliersthinned)
+
+NSoutliersthinned<-as.data.frame(NSoutliersthinned)
+
+write.csv(NSoutliersthinned,file="NSoutliers_nocorrection_thinned.csv")
 ```
 
